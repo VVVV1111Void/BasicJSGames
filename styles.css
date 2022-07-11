@@ -1,0 +1,64 @@
+#gameBoard {
+    border: 3px solid;
+    border-style: solid;
+    vertical-align: middle;
+    }
+
+#scoreText {
+    font-size: 48px;
+    background-color: gray;
+    border: 3px;
+    border-style:inset
+    }
+
+#scoreContainer {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    }
+.controls {
+    font-size: 16px;
+    background-color: #666;
+    border: 2px;
+    border-style: inset;
+}
+.playerText {
+    font-family:fantasy;
+    font-style: italic;
+    font-size: 24px;
+    margin: 20px;
+    border: #494e49 solid;
+}
+
+#right {
+    background-color: red;
+}
+
+#left {
+    background-color: blue;
+}
+.buttons {
+    font-size: 32px;
+    font-style: italic;
+    font-family: cursive;
+    border: 2px; 
+    border-style: inset; 
+    cursor: pointer;
+    }
+
+
+#gameContainer {
+    text-align: center;
+    border: 1px;
+    border-radius: 1cm;
+    border-style: dashed;
+}
+
+.buttons:hover {
+    background-color:#494e49;
+}
+
+.buttons:active {
+    background-color: #424942;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}

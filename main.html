@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css"> 
+    <title>Document</title>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="scoreContainer"><span id="scoreText">0:0</span></div>
+        <div>
+            <button id="resetBtn" class="buttons">Reset</button>
+            <button id="pauseBtn" class="buttons">Pause</button>
+            <button id="robotBtn" class="buttons">AI(WIP): OFF</button>
+        </div>
+        <span class="controls">NumPad Arrows to control Player 2</span>
+        <span class="controls">WS to control Player 1</span>
+        <div class="boardContainer">
+            <span class="playerText" id="left">Player 1</span>
+            <canvas id="gameBoard" width="500" height="500"></canvas>
+            <span class="playerText" id="right">Player 2</span>
+        </div>
+    </div>
+    <script src="index.js"></script>
+    
+</body>
+</html>

@@ -3,6 +3,10 @@ const ctx = gameBoard.getContext("2d");
 const scoreText = document.querySelector("#scoreText");
 const resetBtn = document.querySelector("#resetBtn");
 const pauseBtn = document.querySelector("#pauseBtn");
+const robotBtn = document.querySelector("#robotBtn")
+const hackBtn = document.querySelector('#hackBtn')
+const accelerationBtn = document.querySelector('#accelerationBtn')
+
 const gameWidth = gameBoard.width;
 const gameHeight = gameBoard.height;
 const boardBackground = "forestgreen";
@@ -13,7 +17,9 @@ const ballColor = "yellow";
 const ballBorderColor = "black";
 const ballRadius = 12.5;
 const paddleSpeed = 50;
+let isAI = false
 let intervalID;
+let aiIntervalID;
 let ballSpeed;
 let ballX = gameWidth / 2;
 let ballY = gameHeight / 2;
@@ -21,12 +27,16 @@ let ballXDirection = 0;
 let ballYDirection = 0;
 let player1Score = 0;
 let player2Score = 0;
+let isAcceleration = true
+let hackedAI = false
 let paddle1 = {
     width: 25,
     height: 100,
     x: 0,
     y: 0
 };
+let maximum_time = 800
+let minimum_time = 600
 let paddle2 = {
     width: 25,
     height: 100,
@@ -37,12 +47,29 @@ let paused = false
 window.addEventListener("keydown", changeDirection);
 resetBtn.addEventListener("click", resetGame);
 pauseBtn.addEventListener("click", pauseGame);
+robotBtn.addEventListener("click", activateAI);
+hackBtn.addEventListener("click", hackAI);
+accelerationBtn.addEventListener("click", accelerationActivate);
 gameStart();
 function gameStart() {
     console.log('Starting...')
     createBall()
     nextTick()
+    nextAITick()
 }
+function accelerationActivate() {
+    switch (isAcceleration) {
+        case true:
+            accelerationBtn.textContent = 'Ball Acceleration: OFF';
+            isAcceleration = false;
+            break;
+        case false:
+            accelerationBtn.textContent = 'Ball Acceleration: ON';
+            isAcceleration = true;
+            break;
+        default:
+            break;
+    }}
 function pauseGame() {
     switch(paused) {
         case true:
@@ -56,7 +83,6 @@ function pauseGame() {
     }
 }
 function resetGame() {
-    console.log('Test');
     player1Score = 0;
     player2Score = 0;
     paddle1 = {
@@ -89,13 +115,23 @@ function nextTick() {
                 drawPaddles();
                 moveBall();
                 drawBall(ballX, ballY);
-                checkCollision()
+                checkCollision();
             }
             nextTick()
         }, 10)   
     }
 }
 
+function nextAITick() {
+    {
+        aiIntervalID = setTimeout(() => {
+            if(paused == false) {
+                mainAI();
+            }
+            nextAITick();
+        }, (Math.random() * (maximum_time - minimum_time) + minimum_time))
+    }
+}
 function clearBoard() {
     ctx.fillStyle = boardBackground
     ctx.fillRect(0, 0, gameWidth, gameHeight)
@@ -173,7 +209,7 @@ function checkCollision() {
         if(ballY > paddle1.y && ballY < paddle1.y + paddle1.height){
             ballX = (paddle1.x + paddle1.width) + ballRadius; // if ball gets stuck
             ballXDirection *= -1;
-            ballSpeed += 1;
+            if(isAcceleration){ballSpeed += 1;};
         }
     }
     if(ballX >= (paddle2.x - ballRadius)){
@@ -181,6 +217,7 @@ function checkCollision() {
             ballX = paddle2.x - ballRadius; // if ball gets stuck
             ballXDirection *= -1;
             ballSpeed += 1;
+            if(isAcceleration){ballSpeed += 1;};
         }
     }
 
@@ -205,13 +242,16 @@ function changeDirection(event) {
                 }
                 break;
             case paddle2UP:
-                if( paddle2.y > 0) {
-                    paddle2.y -= paddleSpeed
+                if( isAI == false){                  
+                    if( paddle2.y > 0) {
+                    paddle2.y -= paddleSpeed}
                 }
                 break;
             case paddle2DOWN:
+                if( isAI == false){ 
                 if( paddle2.y < gameHeight - paddle2.height) {
                     paddle2.y += paddleSpeed
+                }
                 }
                 break;
             default:
@@ -220,7 +260,89 @@ function changeDirection(event) {
         }
     }
 }
-
 function updateScore() {
-    scoreText.textContent = `${player1Score} : ${player2Score}`
+    scoreText.textContent = `${player1Score}:${player2Score}`
+}
+function activateAI() {
+    switch(isAI) {
+        case true:
+            robotBtn.textContent = 'AI : OFF';
+            isAI = false;
+            break;
+        case false:
+            robotBtn.textContent = 'AI : ON';
+            isAI = true;
+            resetGame()
+            break;
+    }}
+let slope = 1
+let paddle2_relative_to_ball = 1;
+let run;
+let rise;
+const middle_of_paddle2 = paddle2.height/2;
+function mainAI() {
+    switch(isAI){
+        case true:
+            run = ballX-paddle2.x
+            rise = ballY-paddle2.y
+            slope = (rise)/(run)
+            readData();
+            ai_move(paddle2_relative_to_ball);
+            break;
+        case false:
+            return;
+    }
+}
+
+// States:
+// 1 - slope(left to right is going down)
+// 0 - slope is flat
+// 2 - slope(left to right is going up)
+function readData() {
+    switch(true) {
+        case rise < middle_of_paddle2:
+            paddle2_relative_to_ball = 1;
+            break;
+        case rise > middle_of_paddle2:
+            paddle2_relative_to_ball = 2;
+            break;
+        default:
+            paddle2_relative_to_ball = 0;
+            break;
+    }
+}
+
+function ai_move(state) {
+    switch(true) {
+        case state == 2:
+            if( paddle2.y < gameHeight - paddle2.height) {
+                paddle2.y += paddleSpeed
+            }
+            break;
+        case state == 1:
+            if( paddle2.y > 0) {
+                paddle2.y -= paddleSpeed
+            }
+            break;
+        case state == 0:
+            break;
+    }}
+
+function hackAI() {
+    switch(hackedAI) {
+        case true:
+            hackedAI = false;
+            hackBtn.textContent = 'Hack AI : OFF';
+            maximum_time = 600;
+            minimum_time = 400
+            resetGame()
+            break;
+        case false:
+            maximum_time = 400
+            minimum_time = 100
+            hackedAI = true;
+            hackBtn.textContent = 'Hack AI : ON';
+            resetGame();
+            break;
+    }
 }

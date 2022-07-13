@@ -3,10 +3,7 @@ const ctx = gameBoard.getContext("2d");
 const scoreText = document.querySelector("#scoreText");
 const resetBtn = document.querySelector("#resetBtn");
 const pauseBtn = document.querySelector("#pauseBtn");
-const robotBtn = document.querySelector("#robotBtn")
-const hackBtn = document.querySelector('#hackBtn')
 const accelerationBtn = document.querySelector('#accelerationBtn')
-
 const gameWidth = gameBoard.width;
 const gameHeight = gameBoard.height;
 const boardBackground = "forestgreen";
@@ -17,9 +14,7 @@ const ballColor = "yellow";
 const ballBorderColor = "black";
 const ballRadius = 12.5;
 const paddleSpeed = 50;
-let isAI = false
 let intervalID;
-let aiIntervalID;
 let ballSpeed;
 let ballX = gameWidth / 2;
 let ballY = gameHeight / 2;
@@ -28,7 +23,6 @@ let ballYDirection = 0;
 let player1Score = 0;
 let player2Score = 0;
 let isAcceleration = true
-let hackedAI = false
 let paddle1 = {
     width: 25,
     height: 100,
@@ -47,16 +41,7 @@ let paused = false
 window.addEventListener("keydown", changeDirection);
 resetBtn.addEventListener("click", resetGame);
 pauseBtn.addEventListener("click", pauseGame);
-robotBtn.addEventListener("click", activateAI);
-hackBtn.addEventListener("click", hackAI);
 accelerationBtn.addEventListener("click", accelerationActivate);
-gameStart();
-function gameStart() {
-    console.log('Starting...')
-    createBall()
-    nextTick()
-    nextAITick()
-}
 function accelerationActivate() {
     switch (isAcceleration) {
         case true:
@@ -119,17 +104,6 @@ function nextTick() {
             }
             nextTick()
         }, 10)   
-    }
-}
-
-function nextAITick() {
-    {
-        aiIntervalID = setTimeout(() => {
-            if(paused == false) {
-                mainAI();
-            }
-            nextAITick();
-        }, (Math.random() * (maximum_time - minimum_time) + minimum_time))
     }
 }
 function clearBoard() {
@@ -262,87 +236,4 @@ function changeDirection(event) {
 }
 function updateScore() {
     scoreText.textContent = `${player1Score}:${player2Score}`
-}
-function activateAI() {
-    switch(isAI) {
-        case true:
-            robotBtn.textContent = 'AI : OFF';
-            isAI = false;
-            break;
-        case false:
-            robotBtn.textContent = 'AI : ON';
-            isAI = true;
-            resetGame()
-            break;
-    }}
-let slope = 1
-let paddle2_relative_to_ball = 1;
-let run;
-let rise;
-const middle_of_paddle2 = paddle2.height/2;
-function mainAI() {
-    switch(isAI){
-        case true:
-            run = ballX-paddle2.x
-            rise = ballY-paddle2.y
-            slope = (rise)/(run)
-            readData();
-            ai_move(paddle2_relative_to_ball);
-            break;
-        case false:
-            return;
-    }
-}
-
-// States:
-// 1 - slope(left to right is going down)
-// 0 - slope is flat
-// 2 - slope(left to right is going up)
-function readData() {
-    switch(true) {
-        case rise < middle_of_paddle2:
-            paddle2_relative_to_ball = 1;
-            break;
-        case rise > middle_of_paddle2:
-            paddle2_relative_to_ball = 2;
-            break;
-        default:
-            paddle2_relative_to_ball = 0;
-            break;
-    }
-}
-
-function ai_move(state) {
-    switch(true) {
-        case state == 2:
-            if( paddle2.y < gameHeight - paddle2.height) {
-                paddle2.y += paddleSpeed
-            }
-            break;
-        case state == 1:
-            if( paddle2.y > 0) {
-                paddle2.y -= paddleSpeed
-            }
-            break;
-        case state == 0:
-            break;
-    }}
-
-function hackAI() {
-    switch(hackedAI) {
-        case true:
-            hackedAI = false;
-            hackBtn.textContent = 'Hack AI : OFF';
-            maximum_time = 600;
-            minimum_time = 400
-            resetGame()
-            break;
-        case false:
-            maximum_time = 400
-            minimum_time = 100
-            hackedAI = true;
-            hackBtn.textContent = 'Hack AI : ON';
-            resetGame();
-            break;
-    }
 }

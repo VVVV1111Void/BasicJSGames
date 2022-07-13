@@ -26,6 +26,15 @@
         </div>
     </div>
     <script src="index.js"></script>
-    
+    <script src="ai.js"></script>
+    <script>
+        gameStart();
+        function gameStart() {
+            console.log('Starting...')
+            createBall()
+            nextTick()
+            nextAITick()
+        }
+    </script>
 </body>
 </html>

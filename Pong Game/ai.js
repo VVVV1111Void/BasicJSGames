@@ -3,7 +3,6 @@ const hackBtn = document.querySelector('#hackBtn')
 robotBtn.addEventListener("click", activateAI);
 hackBtn.addEventListener("click", hackAI);
 let hackedAI = false
-let slope = 1
 let paddle2_relative_to_ball = 1;
 let run;
 let rise;
@@ -15,7 +14,6 @@ function mainAI() {
         case true:
             run = ballX-paddle2.x
             rise = ballY-paddle2.y
-            slope = (rise)/(run)
             readData();
             ai_move(paddle2_relative_to_ball);
             break;
@@ -24,16 +22,14 @@ function mainAI() {
     }
 }
 function activateAI() {
-    switch(isAI) {
-        case true:
-            robotBtn.textContent = 'AI : OFF';
-            isAI = false;
-            break;
-        case false:
-            robotBtn.textContent = 'AI : ON';
-            isAI = true;
-            resetGame()
-            break;
+    if(isAI) {
+        robotBtn.textContent = 'AI : OFF';
+        isAI = false;
+    }
+    else{
+        robotBtn.textContent = 'AI : ON';
+        isAI = true;
+        resetGame()   
     }}
 // States:
 // 1 - slope(left to right is going down)
@@ -62,7 +58,6 @@ function readData() {
 }
 
 function ai_move(state) {
-    console.log(rise, state, ballY, paddle2.y)
     switch(true) {
         case state == 2:
             if( paddle2.y < gameHeight - paddle2.height) {
